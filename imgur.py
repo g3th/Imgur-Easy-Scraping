@@ -51,7 +51,7 @@ browser.close()
 
 def fetch_all_the_image_links(videos, index, page):
 	progress_bar = round(index / len(page) * 100 , 1)
-	print('\rScraping {} Images: Progress {}              '.format(len(videos), progress_bar), end='')
+	print('\rSorting {} Links - Found {} Images: Progress {}              '.format(len(videos), str(index), progress_bar), end='')
 	request = requests.get(page[index])
 	fetch_link = soup(request.content,'html.parser')	
 	images_links = fetch_link.find_all('meta',attrs={'name':'twitter:image'})
@@ -59,7 +59,7 @@ def fetch_all_the_image_links(videos, index, page):
 
 def fetch_all_the_video_links(images, index, page):
 	progress_bar = round(index / len(page) * 100 , 1)
-	print('\rScraping {} Videos: Progress {}              '.format(len(images), progress_bar), end='')
+	print('\rSorting {} Links - Found {} Videos: Progress {}              '.format(len(images), str(index), progress_bar), end='')
 	request = requests.get(page[index])
 	fetch_link = soup(request.content,'html.parser')	
 	video_link = fetch_link.find_all('meta',attrs={'name':'twitter:player:stream'})
@@ -86,10 +86,10 @@ image_links=[]
 video_links=[]
 with concurrent.futures.ThreadPoolExecutor(30) as executor:
 	for index in range(len(gallery_links)):
-		galleries.append(executor.submit(fetch_all_the_image_links, index, gallery_links))
+		galleries.append(executor.submit(fetch_all_the_image_links, gallery_links, index, gallery_links))
 	print('\n--------------------------')
 	for index in range(len(gallery_links)):
-		videos.append(executor.submit(fetch_all_the_video_links, index, gallery_links))
+		videos.append(executor.submit(fetch_all_the_video_links, gallery_links, index, gallery_links))
 	print('\n--------------------------')
 	for gallery in concurrent.futures.as_completed(galleries):
 		future_results_images.append(gallery.result())
