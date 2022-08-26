@@ -9,6 +9,7 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup as soup
+
 title()
 images_directory = str(Path(__file__).parent) + '/downloaded_images/'
 videos_directory = str(Path(__file__).parent) + '/downloaded_videos_or_gifs/'
@@ -27,6 +28,7 @@ print('\nOpening Page')
 browser.get(gallery_request)
 time.sleep(0.5)
 title()
+
 if browser.find_elements_by_xpath('//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
 	GDPR_disagree_button = browser.find_element_by_xpath('//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]')
 	GDPR_disagree_button.click()	
@@ -46,7 +48,8 @@ for link in browser.find_elements_by_tag_name('a'):
 	else:
 		gallery_links.append(link.get_attribute('href'))
 browser.close()
-def fetch_all_the_image_links(index, page):
+
+def fetch_all_the_image_links(videos, index, page):
 	progress_bar = round(index / len(page) * 100 , 1)
 	print('\rScraping {} Images: Progress {}              '.format(len(videos), progress_bar), end='')
 	request = requests.get(page[index])
@@ -54,9 +57,9 @@ def fetch_all_the_image_links(index, page):
 	images_links = fetch_link.find_all('meta',attrs={'name':'twitter:image'})
 	return images_links
 
-def fetch_all_the_video_links(index, page):
+def fetch_all_the_video_links(images, index, page):
 	progress_bar = round(index / len(page) * 100 , 1)
-	print('\r\r\rScraping {} Videos: Progress {}              '.format(len(videos), progress_bar), end='')
+	print('\rScraping {} Videos: Progress {}              '.format(len(images), progress_bar), end='')
 	request = requests.get(page[index])
 	fetch_link = soup(request.content,'html.parser')	
 	video_link = fetch_link.find_all('meta',attrs={'name':'twitter:player:stream'})
