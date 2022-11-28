@@ -8,6 +8,7 @@ from pathlib import Path
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup as soup
 
 title()
@@ -29,20 +30,20 @@ browser.get(gallery_request)
 time.sleep(0.5)
 title()
 
-if browser.find_elements_by_xpath('//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
-	GDPR_disagree_button = browser.find_element_by_xpath('//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]')
+if browser.find_elements(By.XPATH,'//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]'):
+	GDPR_disagree_button = browser.find_element(By.XPATH,'//*[@id="qc-cmp2-ui"]/div[2]/div/button[2]')
 	GDPR_disagree_button.click()	
 scroll_counter = 0	
-page_scrolling = browser.find_element_by_tag_name('html')
+page_scrolling = browser.page_source
 
 print('\r\nLoading Images         ',end='')
 while scroll_counter < number_of_pages:
 	print('\rFetching Page {}         '.format(str(scroll_counter+1)),end='')
-	page_scrolling.send_keys(Keys.END)
+	browser.execute_script("window.scrollTo(0,document.body.scrollHeight)")
 	time.sleep(0.5)
 	scroll_counter +=1
 
-for link in browser.find_elements_by_tag_name('a'):
+for link in browser.find_elements(By.TAG_NAME,'a'):
 	if 'gallery' not in link.get_attribute('href'):
 		pass
 	else:
